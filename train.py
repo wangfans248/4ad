@@ -12,7 +12,7 @@ from models.mymodel import mymodel  # 假设你的模型类名是 MyModel 而不
 from models.param import Config  # 你需要创建 param.py 文件
 
 # 训练与验证的合并函数
-def train_and_validate(model, train_loader, val_loader, criterion, optimizer, device, num_epochs, model_name, start_epoch=0, patience=5):
+def train_and_validate(model, train_loader, val_loader, criterion, optimizer, device, num_epochs, model_name, start_epoch=0, patience=10):
     os.makedirs("results/dict", exist_ok=True)  # 创建模型保存目录
     best_loss = float('inf')
     early_stop_counter = 0
@@ -40,7 +40,11 @@ def train_and_validate(model, train_loader, val_loader, criterion, optimizer, de
         # 每20个 epoch 保存一次模型
         if (epoch + 1) % 20 == 0:
             model_filename = os.path.join("results/dict", f"{model_name}_epoch_{epoch+1}.pth")
-            torch.save(model.state_dict(), model_filename)
+            torch.save({'model_state_dict': model.state_dict(),
+                        'epoch': epoch,
+                        'optimizer_state_dict': optimizer.state_dict(),
+                        'best_loss': best_loss
+                        }, model_filename)
             logging.info(f"第 {epoch+1} 个 epoch 模型已保存: {model_filename}")
         
         # 验证过程
@@ -68,7 +72,11 @@ def train_and_validate(model, train_loader, val_loader, criterion, optimizer, de
         if val_loss < best_loss:
             best_loss = val_loss
             best_model_filename = os.path.join("results/dict", f"{model_name}_best_model.pth")
-            torch.save(model.state_dict(), best_model_filename)
+            torch.save({'model_state_dict': model.state_dict(),
+                        'epoch': epoch,
+                        'optimizer_state_dict': optimizer.state_dict(),
+                        'best_loss': best_loss
+                        }, best_model_filename)
             logging.info(f"Best model saved with loss: {best_loss:.4f} as {best_model_filename}")
             early_stop_counter = 0
         else:
