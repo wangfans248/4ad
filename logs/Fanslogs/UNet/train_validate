@@ -1,0 +1,268 @@
+2025-03-17 15:55:12,993 - root - INFO - 训练参数: {'batch_size': 16, 'lr': 0.001, 'epochs': 200}
+2025-03-17 15:55:13,133 - root - INFO - 使用设备: cuda
+2025-03-17 15:55:14,051 - root - INFO - 模型结构: UNet(
+  (inc): DoubleConv(
+    (double_conv): Sequential(
+      (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): ReLU(inplace=True)
+      (3): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+      (4): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (5): ReLU(inplace=True)
+    )
+  )
+  (down1): Down(
+    (maxpool_conv): Sequential(
+      (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      (1): DoubleConv(
+        (double_conv): Sequential(
+          (0): Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace=True)
+          (3): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (4): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (5): ReLU(inplace=True)
+        )
+      )
+    )
+  )
+  (down2): Down(
+    (maxpool_conv): Sequential(
+      (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      (1): DoubleConv(
+        (double_conv): Sequential(
+          (0): Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace=True)
+          (3): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (4): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (5): ReLU(inplace=True)
+        )
+      )
+    )
+  )
+  (down3): Down(
+    (maxpool_conv): Sequential(
+      (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      (1): DoubleConv(
+        (double_conv): Sequential(
+          (0): Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace=True)
+          (3): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (4): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (5): ReLU(inplace=True)
+        )
+      )
+    )
+  )
+  (down4): Down(
+    (maxpool_conv): Sequential(
+      (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      (1): DoubleConv(
+        (double_conv): Sequential(
+          (0): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): ReLU(inplace=True)
+          (3): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (4): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (5): ReLU(inplace=True)
+        )
+      )
+    )
+  )
+  (up1): Up(
+    (up): Upsample(scale_factor=2.0, mode='bilinear')
+    (conv): DoubleConv(
+      (double_conv): Sequential(
+        (0): Conv2d(1024, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU(inplace=True)
+        (3): Conv2d(512, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (4): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (5): ReLU(inplace=True)
+      )
+    )
+  )
+  (up2): Up(
+    (up): Upsample(scale_factor=2.0, mode='bilinear')
+    (conv): DoubleConv(
+      (double_conv): Sequential(
+        (0): Conv2d(512, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU(inplace=True)
+        (3): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (4): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (5): ReLU(inplace=True)
+      )
+    )
+  )
+  (up3): Up(
+    (up): Upsample(scale_factor=2.0, mode='bilinear')
+    (conv): DoubleConv(
+      (double_conv): Sequential(
+        (0): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU(inplace=True)
+        (3): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (4): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (5): ReLU(inplace=True)
+      )
+    )
+  )
+  (up4): Up(
+    (up): Upsample(scale_factor=2.0, mode='bilinear')
+    (conv): DoubleConv(
+      (double_conv): Sequential(
+        (0): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU(inplace=True)
+        (3): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+        (4): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (5): ReLU(inplace=True)
+      )
+    )
+  )
+  (outc): OutConv(
+    (conv): Conv2d(64, 2, kernel_size=(1, 1), stride=(1, 1))
+  )
+)
+2025-03-17 15:56:03,452 - root - INFO - Epoch [1/200], Step [10/47], Loss: 0.3515
+2025-03-17 15:56:30,795 - root - INFO - Epoch [1/200], Step [20/47], Loss: 0.2538
+2025-03-17 15:56:58,018 - root - INFO - Epoch [1/200], Step [30/47], Loss: 0.3167
+2025-03-17 15:57:25,438 - root - INFO - Epoch [1/200], Step [40/47], Loss: 0.2382
+2025-03-17 15:57:48,634 - root - INFO - Epoch 1, Validation Loss: 0.3068, Validation Accuracy: 59975.7067
+2025-03-17 15:57:48,797 - root - INFO - Best model saved with loss: 0.3068 as results/dict/UNet_best_model.pth
+2025-03-17 15:58:15,403 - root - INFO - Epoch [2/200], Step [10/47], Loss: 0.2555
+2025-03-17 15:58:42,354 - root - INFO - Epoch [2/200], Step [20/47], Loss: 0.3039
+2025-03-17 15:59:09,478 - root - INFO - Epoch [2/200], Step [30/47], Loss: 0.1886
+2025-03-17 15:59:36,666 - root - INFO - Epoch [2/200], Step [40/47], Loss: 0.1736
+2025-03-17 15:59:57,564 - root - INFO - Epoch 2, Validation Loss: 0.3914, Validation Accuracy: 52053.1267
+2025-03-17 16:00:28,709 - root - INFO - Epoch [3/200], Step [10/47], Loss: 0.1585
+2025-03-17 16:01:00,391 - root - INFO - Epoch [3/200], Step [20/47], Loss: 0.1354
+2025-03-17 16:01:32,325 - root - INFO - Epoch [3/200], Step [30/47], Loss: 0.3036
+2025-03-17 16:02:03,810 - root - INFO - Epoch [3/200], Step [40/47], Loss: 0.1458
+2025-03-17 16:02:29,025 - root - INFO - Epoch 3, Validation Loss: 0.1915, Validation Accuracy: 61293.8000
+2025-03-17 16:02:29,145 - root - INFO - Best model saved with loss: 0.1915 as results/dict/UNet_best_model.pth
+2025-03-17 16:02:57,038 - root - INFO - Epoch [4/200], Step [10/47], Loss: 0.1653
+2025-03-17 16:03:23,425 - root - INFO - Epoch [4/200], Step [20/47], Loss: 0.2457
+2025-03-17 16:03:50,927 - root - INFO - Epoch [4/200], Step [30/47], Loss: 0.2540
+2025-03-17 16:04:18,105 - root - INFO - Epoch [4/200], Step [40/47], Loss: 0.1228
+2025-03-17 16:04:40,209 - root - INFO - Epoch 4, Validation Loss: 0.1583, Validation Accuracy: 62354.1133
+2025-03-17 16:04:40,317 - root - INFO - Best model saved with loss: 0.1583 as results/dict/UNet_best_model.pth
+2025-03-17 16:05:07,833 - root - INFO - Epoch [5/200], Step [10/47], Loss: 0.1566
+2025-03-17 16:05:34,393 - root - INFO - Epoch [5/200], Step [20/47], Loss: 0.1320
+2025-03-17 16:06:01,433 - root - INFO - Epoch [5/200], Step [30/47], Loss: 0.1449
+2025-03-17 16:06:28,877 - root - INFO - Epoch [5/200], Step [40/47], Loss: 0.2461
+2025-03-17 16:06:56,303 - root - INFO - Epoch 5, Validation Loss: 0.2473, Validation Accuracy: 60783.2000
+2025-03-17 16:07:23,893 - root - INFO - Epoch [6/200], Step [10/47], Loss: 0.1595
+2025-03-17 16:07:50,104 - root - INFO - Epoch [6/200], Step [20/47], Loss: 0.1848
+2025-03-17 16:08:17,148 - root - INFO - Epoch [6/200], Step [30/47], Loss: 0.1243
+2025-03-17 16:08:44,192 - root - INFO - Epoch [6/200], Step [40/47], Loss: 0.1736
+2025-03-17 16:09:11,345 - root - INFO - Epoch 6, Validation Loss: 0.1796, Validation Accuracy: 60715.9467
+2025-03-17 16:09:37,609 - root - INFO - Epoch [7/200], Step [10/47], Loss: 0.1780
+2025-03-17 16:10:04,702 - root - INFO - Epoch [7/200], Step [20/47], Loss: 0.1283
+2025-03-17 16:10:31,699 - root - INFO - Epoch [7/200], Step [30/47], Loss: 0.1761
+2025-03-17 16:10:58,598 - root - INFO - Epoch [7/200], Step [40/47], Loss: 0.1202
+2025-03-17 16:11:25,750 - root - INFO - Epoch 7, Validation Loss: 0.1659, Validation Accuracy: 62278.0600
+2025-03-17 16:11:51,982 - root - INFO - Epoch [8/200], Step [10/47], Loss: 0.1337
+2025-03-17 16:12:18,953 - root - INFO - Epoch [8/200], Step [20/47], Loss: 0.1514
+2025-03-17 16:12:45,490 - root - INFO - Epoch [8/200], Step [30/47], Loss: 0.1302
+2025-03-17 16:13:13,332 - root - INFO - Epoch [8/200], Step [40/47], Loss: 0.1382
+2025-03-17 16:13:39,658 - root - INFO - Epoch 8, Validation Loss: 0.1408, Validation Accuracy: 62588.7067
+2025-03-17 16:13:39,784 - root - INFO - Best model saved with loss: 0.1408 as results/dict/UNet_best_model.pth
+2025-03-17 16:14:07,046 - root - INFO - Epoch [9/200], Step [10/47], Loss: 0.1593
+2025-03-17 16:14:34,049 - root - INFO - Epoch [9/200], Step [20/47], Loss: 0.1756
+2025-03-17 16:15:01,001 - root - INFO - Epoch [9/200], Step [30/47], Loss: 0.1734
+2025-03-17 16:15:28,238 - root - INFO - Epoch [9/200], Step [40/47], Loss: 0.1727
+2025-03-17 16:15:55,763 - root - INFO - Epoch 9, Validation Loss: 0.1340, Validation Accuracy: 62751.9200
+2025-03-17 16:15:55,877 - root - INFO - Best model saved with loss: 0.1340 as results/dict/UNet_best_model.pth
+2025-03-17 16:16:22,615 - root - INFO - Epoch [10/200], Step [10/47], Loss: 0.1575
+2025-03-17 16:16:49,577 - root - INFO - Epoch [10/200], Step [20/47], Loss: 0.1082
+2025-03-17 16:17:16,681 - root - INFO - Epoch [10/200], Step [30/47], Loss: 0.1166
+2025-03-17 16:17:44,118 - root - INFO - Epoch [10/200], Step [40/47], Loss: 0.1298
+2025-03-17 16:18:11,722 - root - INFO - Epoch 10, Validation Loss: 0.1729, Validation Accuracy: 62244.0467
+2025-03-17 16:18:40,132 - root - INFO - Epoch [11/200], Step [10/47], Loss: 0.1542
+2025-03-17 16:19:07,891 - root - INFO - Epoch [11/200], Step [20/47], Loss: 0.1389
+2025-03-17 16:19:35,468 - root - INFO - Epoch [11/200], Step [30/47], Loss: 0.1733
+2025-03-17 16:20:02,449 - root - INFO - Epoch [11/200], Step [40/47], Loss: 0.1690
+2025-03-17 16:20:28,815 - root - INFO - Epoch 11, Validation Loss: 0.1342, Validation Accuracy: 62417.2933
+2025-03-17 16:20:57,067 - root - INFO - Epoch [12/200], Step [10/47], Loss: 0.1371
+2025-03-17 16:21:23,889 - root - INFO - Epoch [12/200], Step [20/47], Loss: 0.1306
+2025-03-17 16:21:50,824 - root - INFO - Epoch [12/200], Step [30/47], Loss: 0.1465
+2025-03-17 16:22:18,251 - root - INFO - Epoch [12/200], Step [40/47], Loss: 0.1535
+2025-03-17 16:22:45,559 - root - INFO - Epoch 12, Validation Loss: 0.1602, Validation Accuracy: 62054.2267
+2025-03-17 16:23:13,465 - root - INFO - Epoch [13/200], Step [10/47], Loss: 0.1206
+2025-03-17 16:23:41,064 - root - INFO - Epoch [13/200], Step [20/47], Loss: 0.0919
+2025-03-17 16:24:07,681 - root - INFO - Epoch [13/200], Step [30/47], Loss: 0.1514
+2025-03-17 16:24:35,423 - root - INFO - Epoch [13/200], Step [40/47], Loss: 0.1929
+2025-03-17 16:25:03,361 - root - INFO - Epoch 13, Validation Loss: 0.1273, Validation Accuracy: 62587.1467
+2025-03-17 16:25:03,469 - root - INFO - Best model saved with loss: 0.1273 as results/dict/UNet_best_model.pth
+2025-03-17 16:25:30,068 - root - INFO - Epoch [14/200], Step [10/47], Loss: 0.1118
+2025-03-17 16:25:57,768 - root - INFO - Epoch [14/200], Step [20/47], Loss: 0.1044
+2025-03-17 16:26:25,064 - root - INFO - Epoch [14/200], Step [30/47], Loss: 0.1272
+2025-03-17 16:26:51,671 - root - INFO - Epoch [14/200], Step [40/47], Loss: 0.1116
+2025-03-17 16:27:18,991 - root - INFO - Epoch 14, Validation Loss: 0.1340, Validation Accuracy: 62705.2867
+2025-03-17 16:27:46,423 - root - INFO - Epoch [15/200], Step [10/47], Loss: 0.1036
+2025-03-17 16:28:13,946 - root - INFO - Epoch [15/200], Step [20/47], Loss: 0.1691
+2025-03-17 16:28:41,317 - root - INFO - Epoch [15/200], Step [30/47], Loss: 0.1066
+2025-03-17 16:29:09,070 - root - INFO - Epoch [15/200], Step [40/47], Loss: 0.1640
+2025-03-17 16:29:35,480 - root - INFO - Epoch 15, Validation Loss: 0.1313, Validation Accuracy: 62722.0667
+2025-03-17 16:30:02,665 - root - INFO - Epoch [16/200], Step [10/47], Loss: 0.1320
+2025-03-17 16:30:29,676 - root - INFO - Epoch [16/200], Step [20/47], Loss: 0.1475
+2025-03-17 16:30:56,628 - root - INFO - Epoch [16/200], Step [30/47], Loss: 0.1249
+2025-03-17 16:31:22,790 - root - INFO - Epoch [16/200], Step [40/47], Loss: 0.1114
+2025-03-17 16:31:50,055 - root - INFO - Epoch 16, Validation Loss: 0.1559, Validation Accuracy: 62601.2267
+2025-03-17 16:32:17,883 - root - INFO - Epoch [17/200], Step [10/47], Loss: 0.1225
+2025-03-17 16:32:45,518 - root - INFO - Epoch [17/200], Step [20/47], Loss: 0.1582
+2025-03-17 16:33:12,469 - root - INFO - Epoch [17/200], Step [30/47], Loss: 0.1181
+2025-03-17 16:33:39,604 - root - INFO - Epoch [17/200], Step [40/47], Loss: 0.1227
+2025-03-17 16:34:05,797 - root - INFO - Epoch 17, Validation Loss: 0.1151, Validation Accuracy: 62946.1467
+2025-03-17 16:34:05,908 - root - INFO - Best model saved with loss: 0.1151 as results/dict/UNet_best_model.pth
+2025-03-17 16:34:33,070 - root - INFO - Epoch [18/200], Step [10/47], Loss: 0.0915
+2025-03-17 16:35:00,074 - root - INFO - Epoch [18/200], Step [20/47], Loss: 0.1190
+2025-03-17 16:35:27,041 - root - INFO - Epoch [18/200], Step [30/47], Loss: 0.1066
+2025-03-17 16:35:53,171 - root - INFO - Epoch [18/200], Step [40/47], Loss: 0.0933
+2025-03-17 16:36:20,077 - root - INFO - Epoch 18, Validation Loss: 0.1101, Validation Accuracy: 63035.7267
+2025-03-17 16:36:20,204 - root - INFO - Best model saved with loss: 0.1101 as results/dict/UNet_best_model.pth
+2025-03-17 16:36:47,234 - root - INFO - Epoch [19/200], Step [10/47], Loss: 0.1144
+2025-03-17 16:37:14,884 - root - INFO - Epoch [19/200], Step [20/47], Loss: 0.1142
+2025-03-17 16:37:42,195 - root - INFO - Epoch [19/200], Step [30/47], Loss: 0.1173
+2025-03-17 16:38:08,285 - root - INFO - Epoch [19/200], Step [40/47], Loss: 0.0849
+2025-03-17 16:38:35,460 - root - INFO - Epoch 19, Validation Loss: 0.1689, Validation Accuracy: 61936.6933
+2025-03-17 16:39:03,245 - root - INFO - Epoch [20/200], Step [10/47], Loss: 0.1128
+2025-03-17 16:39:30,245 - root - INFO - Epoch [20/200], Step [20/47], Loss: 0.1060
+2025-03-17 16:39:57,617 - root - INFO - Epoch [20/200], Step [30/47], Loss: 0.1277
+2025-03-17 16:40:23,875 - root - INFO - Epoch [20/200], Step [40/47], Loss: 0.1120
+2025-03-17 16:40:43,668 - root - INFO - 第 20 个 epoch 模型已保存: results/dict/UNet_epoch_20.pth
+2025-03-17 16:40:51,203 - root - INFO - Epoch 20, Validation Loss: 0.1156, Validation Accuracy: 63006.3933
+2025-03-17 16:41:18,594 - root - INFO - Epoch [21/200], Step [10/47], Loss: 0.1010
+2025-03-17 16:41:45,860 - root - INFO - Epoch [21/200], Step [20/47], Loss: 0.1321
+2025-03-17 16:42:13,175 - root - INFO - Epoch [21/200], Step [30/47], Loss: 0.1188
+2025-03-17 16:42:39,419 - root - INFO - Epoch [21/200], Step [40/47], Loss: 0.0999
+2025-03-17 16:43:06,466 - root - INFO - Epoch 21, Validation Loss: 0.1039, Validation Accuracy: 63079.2800
+2025-03-17 16:43:06,583 - root - INFO - Best model saved with loss: 0.1039 as results/dict/UNet_best_model.pth
+2025-03-17 16:43:33,778 - root - INFO - Epoch [22/200], Step [10/47], Loss: 0.0887
+2025-03-17 16:44:00,978 - root - INFO - Epoch [22/200], Step [20/47], Loss: 0.1082
+2025-03-17 16:44:28,030 - root - INFO - Epoch [22/200], Step [30/47], Loss: 0.1235
+2025-03-17 16:44:54,059 - root - INFO - Epoch [22/200], Step [40/47], Loss: 0.0833
+2025-03-17 16:45:21,166 - root - INFO - Epoch 22, Validation Loss: 0.0972, Validation Accuracy: 63127.7867
+2025-03-17 16:45:21,280 - root - INFO - Best model saved with loss: 0.0972 as results/dict/UNet_best_model.pth
+2025-03-17 16:45:48,484 - root - INFO - Epoch [23/200], Step [10/47], Loss: 0.1144
+2025-03-17 16:46:15,655 - root - INFO - Epoch [23/200], Step [20/47], Loss: 0.1175
+2025-03-17 16:46:42,970 - root - INFO - Epoch [23/200], Step [30/47], Loss: 0.1294
+2025-03-17 16:47:09,090 - root - INFO - Epoch [23/200], Step [40/47], Loss: 0.1566
+2025-03-17 16:47:36,198 - root - INFO - Epoch 23, Validation Loss: 0.1183, Validation Accuracy: 62653.2867
+2025-03-17 16:48:03,397 - root - INFO - Epoch [24/200], Step [10/47], Loss: 0.0571
+2025-03-17 16:48:30,450 - root - INFO - Epoch [24/200], Step [20/47], Loss: 0.1023
+2025-03-17 16:48:56,576 - root - INFO - Epoch [24/200], Step [30/47], Loss: 0.0776
+2025-03-17 16:49:24,341 - root - INFO - Epoch [24/200], Step [40/47], Loss: 0.0780
+2025-03-17 16:49:51,625 - root - INFO - Epoch 24, Validation Loss: 0.1269, Validation Accuracy: 62842.4800
+2025-03-17 16:50:17,848 - root - INFO - Epoch [25/200], Step [10/47], Loss: 0.0763
+2025-03-17 16:50:44,901 - root - INFO - Epoch [25/200], Step [20/47], Loss: 0.0859
+2025-03-17 16:51:12,068 - root - INFO - Epoch [25/200], Step [30/47], Loss: 0.1368
+2025-03-17 16:51:39,259 - root - INFO - Epoch [25/200], Step [40/47], Loss: 0.0979
+2025-03-17 16:52:06,515 - root - INFO - Epoch 25, Validation Loss: 0.1044, Validation Accuracy: 63006.5600
+2025-03-17 16:52:32,739 - root - INFO - Epoch [26/200], Step [10/47], Loss: 0.1247
+2025-03-17 16:53:00,059 - root - INFO - Epoch [26/200], Step [20/47], Loss: 0.0787
+2025-03-17 16:53:27,130 - root - INFO - Epoch [26/200], Step [30/47], Loss: 0.1266

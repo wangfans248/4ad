@@ -5,7 +5,7 @@ class Config:
         self.batch_size = batch_size
         self.lr = lr
         self.epochs = epochs
-
+    
         self.parse_args()
 
     def parse_args(self):
@@ -28,3 +28,19 @@ class Config:
 
     def __repr__(self):
         return str(self.__dict__)
+    
+# def main():
+#     config = Config()
+#     print(config)
+#     arg = config.__dict__
+
+#     config.update(batch_size=32, lr=0.01)
+#     print(config)
+
+#     config.update(batch_size=64, lr=0.001, epochs=100)
+#     print(config)
+
+#     print(arg['batch_size'])
+
+# if __name__ == "__main__":
+#     main()

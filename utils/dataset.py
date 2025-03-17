@@ -5,16 +5,16 @@ from PIL import Image
 
 
 class CustomDataset(Dataset):
-    def __init__(self, root_dir, flag='train', transform=None):
+    def __init__(self, root_dir, transform=None, flag='train'):
         super().__init__()
         assert flag in ['train', 'val', 'test']
         self.root_dir = root_dir
         self.flag = flag
         self.transform = transform
         self.image_dir = os.path.join(root_dir, flag, "images")
-        self.image_paths = [os.path.join(self.image_dir, x) for x in os.listdir(self.image_dir) if x.endswith(".png", ".jpg", ".jpeg")]
+        self.image_paths = [os.path.join(self.image_dir, x) for x in os.listdir(self.image_dir) if x.endswith((".png", ".jpg", ".jpeg"))]
         self.mask_dir = os.path.join(root_dir, flag, "masks")
-        self.mask_paths = [os.path.join(self.mask_dir, x) for x in os.listdir(self.mask_dir) if x.endswith(".png", ".jpg", ".jpeg")]
+        self.mask_paths = [os.path.join(self.mask_dir, x) for x in os.listdir(self.mask_dir) if x.endswith((".png", ".jpg", ".jpeg"))]
         assert len(self.image_paths) == len(self.mask_paths), f"Number of images and masks do not match in {self.flag} dataset"
         assert len(self.image_paths) > 0, f"No images found in {self.flag} dataset"
 
@@ -25,13 +25,12 @@ class CustomDataset(Dataset):
         if self.transform:
             image = self.transform(image)
             mask = self.transform(mask)
-        return image
+        return image, mask
     
     def __len__(self):
-        return len(self.image_paths), len(self.mask_paths)
+        return len(self.image_paths)
 
-    def create_dataloaders(self, batch_size, num_workers):
-        dataset = CustomDataset(self.root_dir, self.flag, self.transform)
-        dataloader = DataLoader(dataset, batch_size=batch_size, num_workers=num_workers, shuffle=True if self.flag == 'train' else False)
+    def create_dataloaders(dataset, batch_size, num_workers):
+        dataloader = DataLoader(dataset, batch_size=batch_size, num_workers=num_workers, shuffle=True if dataset.flag == 'train' else False)
         return dataloader
         

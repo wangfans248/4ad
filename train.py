@@ -4,6 +4,7 @@ import logging
 import argparse
 import torch.nn as nn
 import torch.optim as optim
+import torchvision.transforms as transforms
 
 from logs.logging_config import setup_logging
 from utils.dataset import CustomDataset  # 你需要自己实现 dataset.py
@@ -23,6 +24,7 @@ def train_and_validate(model, train_loader, val_loader, criterion, optimizer, de
         # 训练过程
         for i, (images, masks) in enumerate(train_loader):
             images, masks = images.to(device), masks.to(device)
+            masks = masks.squeeze(1).long()
 
             optimizer.zero_grad()  # 清空梯度
             outputs = model(images)  # 前向传播
@@ -49,12 +51,13 @@ def train_and_validate(model, train_loader, val_loader, criterion, optimizer, de
         with torch.no_grad():  # 不计算梯度
             for images, masks in val_loader:
                 images, masks = images.to(device), masks.to(device)
+                masks = masks.squeeze(1).long()
                 outputs = model(images)
                 loss = criterion(outputs, masks)
                 total_loss += loss.item()
 
                 _, predicted = torch.max(outputs, 1)
-                total += masks.size(0)
+                total += masks.size(0) * masks.size(1) * masks.size(2)
                 correct += (predicted == masks).sum().item()
 
         val_loss = total_loss / len(val_loader)
@@ -70,7 +73,6 @@ def train_and_validate(model, train_loader, val_loader, criterion, optimizer, de
             early_stop_counter = 0
         else:
             early_stop_counter += 1
-
         # 早停机制
         if early_stop_counter >= patience:
             logging.info(f"Early stopping at epoch {epoch+1} due to no improvement in validation loss.")
@@ -88,7 +90,8 @@ def resume_training(model, optimizer, checkpoint_path, device):
 
 # 主函数
 def main():
-    model = mymodel()
+    logging.getLogger("PIL").setLevel(logging.WARNING)
+    model = mymodel(n_channels=3, n_classes=2) # 你需要自己实现 model.py
     model_name = model.__class__.__name__
     log_filename = os.path.join(model_name, "train_validate")
     setup_logging(log_filename)  # 设置日志
@@ -101,23 +104,27 @@ def main():
     # 设备选择
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logging.info(f"使用设备: {device}")
+    model.to(device)
 
     # 数据集 & 数据加载器
     # sub_dir = ["bottle", "cable", "capsule", "carpet", "grid", "hazelnut", "leather", "metal_nut", "pill", "screw", "tile", "toothbrush", "transistor", "wood", "zipper"]
     # root_dir = f"data/MVTecAD/{sub_dir}"
     root_dir = "data/NEU"
-    train_dataset = CustomDataset(root_dir, flag='train')  # 你需要自己实现 dataset.py
-    train_loader = CustomDataset.create_dataloaders(train_dataset, batch_size=args.batch_size, shuffle=True)
-    val_dataset = CustomDataset(root_dir, flag='val')
-    val_loader = CustomDataset.create_dataloaders(val_dataset, batch_size=args.batch_size, shuffle=False)
+    transform = transforms.Compose([
+        transforms.Resize((256, 256)),
+        transforms.ToTensor(),
+    ])
+    train_dataset = CustomDataset(root_dir, transform, flag='train')  # 你需要自己实现 dataset.py
+    train_loader = CustomDataset.create_dataloaders(train_dataset, batch_size=args['batch_size'], num_workers=4)
+    val_dataset = CustomDataset(root_dir, transform, flag='val')
+    val_loader = CustomDataset.create_dataloaders(val_dataset, batch_size=args['batch_size'], num_workers=4)
 
     # 模型
-    model = mymodel()  # 你需要自己实现 model.py
     logging.info(f"模型结构: {model}")
 
     # 损失函数 & 优化器
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=args.lr)
+    optimizer = optim.Adam(model.parameters(), lr=args['lr'])
     
     checkpoint_path = os.path.join("results/dict", f"{model_name}_epoch_{args.get('resume_epoch', 0)}.pth")
     
@@ -129,7 +136,7 @@ def main():
         best_loss = float('inf')
 
     # 训练与验证
-    train_and_validate(model, train_loader, val_loader, criterion, optimizer, device, args.epochs, model_name, start_epoch)
+    train_and_validate(model, train_loader, val_loader, criterion, optimizer, device, args['epochs'], model_name, start_epoch)
 
 if __name__ == "__main__":
     main()
