@@ -1,7 +1,7 @@
 import argparse
 
 class Config:
-    def __init__(self, batch_size=32, lr=0.001, epochs=10):
+    def __init__(self, batch_size=16, lr=0.001, epochs=200):
         self.batch_size = batch_size
         self.lr = lr
         self.epochs = epochs
