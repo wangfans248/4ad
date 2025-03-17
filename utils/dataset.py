@@ -1,13 +1,14 @@
 import torch
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
 import os
 from PIL import Image
 
 
-class Dataset(Dataset):
+class CustomDataset(Dataset):
     def __init__(self, root_dir, flag='train', transform=None):
         super().__init__()
         assert flag in ['train', 'val', 'test']
+        self.root_dir = root_dir
         self.flag = flag
         self.transform = transform
         self.image_dir = os.path.join(root_dir, flag, "images")
@@ -29,5 +30,8 @@ class Dataset(Dataset):
     def __len__(self):
         return len(self.image_paths), len(self.mask_paths)
 
-    
-      
+    def create_dataloaders(self, batch_size, num_workers):
+        dataset = CustomDataset(self.root_dir, self.flag, self.transform)
+        dataloader = DataLoader(dataset, batch_size=batch_size, num_workers=num_workers, shuffle=True if self.flag == 'train' else False)
+        return dataloader
+        
