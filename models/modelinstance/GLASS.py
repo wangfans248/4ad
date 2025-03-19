@@ -117,4 +117,90 @@ class PatchMaker:
         """计算得分。"""
         x = x[:, :, 0]  # 选择第一个通道
         x = torch.max(x, dim=1).values  # 取最大值
+ 
         return x
+    
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import numpy as np
+import scipy.ndimage as ndimage
+
+# ================== Glass 异常合成模块 ==================
+class GlassAnomalySynthesizer:
+    def __init__(self, intensity=0.5):
+        self.intensity = intensity
+    
+    def generate_anomaly(self, image):
+        """生成Glass异常"""
+        pass  # 你需要实现
+    
+    def compute_gradient(self, image):
+        """计算梯度"""
+        pass  # 你需要实现
+    
+    def truncate_anomalies(self, anomaly):
+        """截断异常值"""
+        pass  # 你需要实现
+
+# ================== Perlin 异常合成模块 ==================
+class PerlinAnomalySynthesizer:
+    def __init__(self, scale=10):
+        self.scale = scale
+    
+    def generate_anomaly(self, image):
+        """生成Perlin噪声异常"""
+        pass  # 你需要实现
+
+# ================== 判别器模块 ==================
+class AnomalyDiscriminator(nn.Module):
+    def __init__(self):
+        super().__init__()
+        pass  # 你需要实现
+    
+    def forward(self, glass_score, perlin_score, normal_score):
+        """结合三个分数，计算最终异常分数"""
+        pass  # 你需要实现
+
+# ================== 特征提取模块 ==================
+class FeatureExtractor(nn.Module):
+    def __init__(self, backbone, layers_to_extract_from):
+        super().__init__()
+        pass  # 你需要实现
+    
+    def forward(self, images):
+        """提取图像特征"""
+        pass  # 你需要实现
+
+# ================== Patch 相关模块 ==================
+class MeanMapper(nn.Module):
+    def __init__(self, output_dim):
+        super().__init__()
+        pass  # 你需要实现
+    
+    def forward(self, features):
+        """对特征进行均值映射"""
+        pass  # 你需要实现
+
+class PatchMaker:
+    def __init__(self, patch_size):
+        self.patch_size = patch_size
+    
+    def create_patches(self, image):
+        """将图像划分为多个patch"""
+        pass  # 你需要实现
+
+# ================== 损失函数 ==================
+def local_loss(pred, target):
+    """计算基于局部损失的异常分数"""
+    pass  # 你需要实现
+
+# ================== 可视化模块 ==================
+class AnomalyVisualizer:
+    def __init__(self):
+        pass
+    
+    def visualize(self, normal_img, glass_anomaly, perlin_anomaly):
+        """可视化不同异常与正常图像"""
+        pass  # 你需要实现
