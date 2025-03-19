@@ -4,4 +4,4 @@ results/dict
 */.ipynb_checkpoints/*
 */.vscode/*
 */.pytest_cache/*
-
+logs/*
