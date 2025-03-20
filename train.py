@@ -27,7 +27,7 @@ def train_and_validate(model, train_loader, val_loader, criterion, optimizer, de
         # 训练过程
         for i, (images, masks) in enumerate(train_loader):
             images, masks = images.to(device), masks.to(device)
-            masks = masks.squeeze(1).float()
+            masks = masks.squeeze(1).float()  # 确保 masks 形状正确，并转换为 float
 
             optimizer.zero_grad()  # 清空梯度
             outputs = model(images)  # 前向传播
@@ -62,36 +62,37 @@ def train_and_validate(model, train_loader, val_loader, criterion, optimizer, de
         with torch.no_grad():  # 不计算梯度
             for images, masks in val_loader:
                 images, masks = images.to(device), masks.to(device)
-                masks = masks.squeeze(1).float()  # 确保 masks 形状正确
-                outputs = model(images)
-                loss = criterion(outputs, masks)
+                masks = masks.squeeze(1).float()  # 确保 masks 形状正确，并转换为 float
+
+                outputs = model(images)  # (B,1,H,W) logits
+                loss = criterion(outputs, masks)  # 计算 loss
                 total_loss += loss.item()
+
         # 使用不同阈值计算 F1 分数
                 for threshold in [x * 0.1 for x in range(1, 10)]:
-                    predicted_binary = (torch.sigmoid(outputs) > threshold).float()
-                    f1 = f1_score(masks.cpu().numpy().flatten(), predicted_binary.cpu().numpy().flatten())
+                    predicted_binary = (torch.sigmoid(outputs) > threshold).long()
+                    f1 = f1_score(masks.long().cpu().numpy().flatten(), predicted_binary.cpu().numpy().flatten())
                     if f1 > best_f1:
                         best_f1 = f1
                         best_threshold = threshold
 
-            # 使用最佳阈值进行二值化
+        # 使用最佳阈值进行二值化
                 predicted_binary = (torch.sigmoid(outputs) > best_threshold).float()
 
         # 计算 IoU
-                intersection = (predicted_binary * masks).sum(dim=(1, 2))
-                union = ((predicted_binary + masks).clamp(max=1.0)).sum(dim=(1, 2))
+            intersection = (predicted_binary * masks).sum(dim=(1, 2))  # 交集
+            union = ((predicted_binary + masks).clamp(max=1.0)).sum(dim=(1, 2))  # 并集
 
-                iou = (intersection + 1e-6) / (union + 1e-6)
-                iou = iou.mean().item()
+            iou = (intersection + 1e-6) / (union + 1e-6)  # 计算 IoU
+            iou = iou.mean().item()
 
         # 累加 IoU
-                iou_sum += iou
-                num_batches += 1
+            iou_sum += iou
+            num_batches += 1
 
 # 计算当前 epoch 的平均 IoU
         val_loss = total_loss / len(val_loader)
         val_iou = iou_sum / num_batches  # 计算整个验证集的平均 IoU
-
         logging.info(f"Epoch {epoch+1}, Validation Loss: {val_loss:.4f}, Validation IoU: {val_iou:.4f}, Best Threshold: {best_threshold:.2f}")
 # 早停判断
         if val_iou > best_iou and val_loss < best_loss:
