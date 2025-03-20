@@ -1,10 +1,11 @@
 import argparse
 
 class Config:
-    def __init__(self, batch_size=16, lr=0.001, epochs=200):
+    def __init__(self, batch_size=16, lr=0.001, epochs=200, alpha = 0.6):
         self.batch_size = batch_size
         self.lr = lr
         self.epochs = epochs
+        self.alpha = alpha
     
         self.parse_args()
 

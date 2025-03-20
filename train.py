@@ -5,16 +5,19 @@ import argparse
 import torch.nn as nn
 import torch.optim as optim
 import torchvision.transforms as transforms
+from sklearn.metrics import f1_score
 
 from logs.logging_config import setup_logging
 from utils.dataset import CustomDataset  # 你需要自己实现 dataset.py
 from models.mymodel import mymodel  # 假设你的模型类名是 MyModel 而不是 model
-from models.param import Config  # 你需要创建 param.py 文件
+from models.param import Config 
+from utils.loss import CombinedLoss # 你需要创建 param.py 文件
 
 # 训练与验证的合并函数
-def train_and_validate(model, train_loader, val_loader, criterion, optimizer, device, num_epochs, model_name, start_epoch=0, patience=10):
+def train_and_validate(model, train_loader, val_loader, criterion, optimizer, device, num_epochs, model_name, start_epoch=0, patience=100):
     os.makedirs("results/dict", exist_ok=True)  # 创建模型保存目录
     best_loss = float('inf')
+    best_iou = 0.0
     early_stop_counter = 0
 
     for epoch in range(start_epoch, num_epochs):
@@ -24,7 +27,7 @@ def train_and_validate(model, train_loader, val_loader, criterion, optimizer, de
         # 训练过程
         for i, (images, masks) in enumerate(train_loader):
             images, masks = images.to(device), masks.to(device)
-            masks = masks.squeeze(1).long()
+            masks = masks.squeeze(1).float()
 
             optimizer.zero_grad()  # 清空梯度
             outputs = model(images)  # 前向传播
@@ -50,40 +53,66 @@ def train_and_validate(model, train_loader, val_loader, criterion, optimizer, de
         # 验证过程
         model.eval()  # 进入评估模式
         total_loss = 0.0
-        correct = 0
-        total = 0
+        iou_sum = 0.0
+        num_batches = 0
+
+        best_f1 = 0.0
+        best_threshold = 0.5  # 初始值
+
         with torch.no_grad():  # 不计算梯度
             for images, masks in val_loader:
                 images, masks = images.to(device), masks.to(device)
-                masks = masks.squeeze(1).long()
+                masks = masks.squeeze(1).float()  # 确保 masks 形状正确
                 outputs = model(images)
                 loss = criterion(outputs, masks)
                 total_loss += loss.item()
+        # 使用不同阈值计算 F1 分数
+                for threshold in [x * 0.1 for x in range(1, 10)]:
+                    predicted_binary = (torch.sigmoid(outputs) > threshold).float()
+                    f1 = f1_score(masks.cpu().numpy().flatten(), predicted_binary.cpu().numpy().flatten())
+                    if f1 > best_f1:
+                        best_f1 = f1
+                        best_threshold = threshold
 
-                _, predicted = torch.max(outputs, 1)
-                total += masks.size(0) * masks.size(1) * masks.size(2)
-                correct += (predicted == masks).sum().item()
+            # 使用最佳阈值进行二值化
+                predicted_binary = (torch.sigmoid(outputs) > best_threshold).float()
 
+        # 计算 IoU
+                intersection = (predicted_binary * masks).sum(dim=(1, 2))
+                union = ((predicted_binary + masks).clamp(max=1.0)).sum(dim=(1, 2))
+
+                iou = (intersection + 1e-6) / (union + 1e-6)
+                iou = iou.mean().item()
+
+        # 累加 IoU
+                iou_sum += iou
+                num_batches += 1
+
+# 计算当前 epoch 的平均 IoU
         val_loss = total_loss / len(val_loader)
-        val_acc = correct / total
-        logging.info(f"Epoch {epoch+1}, Validation Loss: {val_loss:.4f}, Validation Accuracy: {val_acc:.4f}")
+        val_iou = iou_sum / num_batches  # 计算整个验证集的平均 IoU
 
-        # 如果当前验证损失低于历史最佳，则保存最佳模型
-        if val_loss < best_loss:
+        logging.info(f"Epoch {epoch+1}, Validation Loss: {val_loss:.4f}, Validation IoU: {val_iou:.4f}, Best Threshold: {best_threshold:.2f}")
+# 早停判断
+        if val_iou > best_iou and val_loss < best_loss:
             best_loss = val_loss
+            best_iou = val_iou
             best_model_filename = os.path.join("results/dict", f"{model_name}_best_model.pth")
             torch.save({'model_state_dict': model.state_dict(),
-                        'epoch': epoch,
-                        'optimizer_state_dict': optimizer.state_dict(),
-                        'best_loss': best_loss
-                        }, best_model_filename)
-            logging.info(f"Best model saved with loss: {best_loss:.4f} as {best_model_filename}")
+                'epoch': epoch,
+                'optimizer_state_dict': optimizer.state_dict(),
+                'best_loss': best_loss
+                }, best_model_filename)
+            logging.info(f"Best model saved with loss: {best_loss:.4f} and iou: {best_iou:.4f} as {best_model_filename}")
             early_stop_counter = 0
         else:
             early_stop_counter += 1
-        # 早停机制
+
+# 早停机制
         if early_stop_counter >= patience:
             logging.info(f"Early stopping at epoch {epoch+1} due to no improvement in validation loss.")
+            
+            
             break
 
 # 恢复训练
@@ -99,7 +128,7 @@ def resume_training(model, optimizer, checkpoint_path, device):
 # 主函数
 def main():
     logging.getLogger("PIL").setLevel(logging.WARNING)
-    model = mymodel(n_channels=3, n_classes=2) # 你需要自己实现 model.py
+    model = mymodel(n_channels=3, n_classes=1) # 你需要自己实现 model.py
     model_name = model.__class__.__name__
     log_filename = os.path.join(model_name, "train_validate")
     setup_logging(log_filename)  # 设置日志
@@ -131,7 +160,7 @@ def main():
     logging.info(f"模型结构: {model}")
 
     # 损失函数 & 优化器
-    criterion = nn.CrossEntropyLoss()
+    criterion = CombinedLoss(alpha=args['alpha'])
     optimizer = optim.Adam(model.parameters(), lr=args['lr'])
     
     checkpoint_path = os.path.join("results/dict", f"{model_name}_epoch_{args.get('resume_epoch', 0)}.pth")
