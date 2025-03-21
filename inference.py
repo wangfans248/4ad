@@ -76,7 +76,7 @@ def main():
     logger.info(f"使用设备: {device}")
 
     # 确保模型路径存在
-    checkpoint_path = os.path.join(args.save_dir, f"{model_name}_best_model.pth")
+    checkpoint_path = os.path.join(args.save_dir, f"{model_name}_epoch_80.pth")
     if not os.path.exists(checkpoint_path):
         logger.error(f"模型权重文件 {checkpoint_path} 不存在！请检查路径是否正确。")
         return
