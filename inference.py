@@ -35,7 +35,7 @@ def inference(model, image_path, device):
         with torch.no_grad():  # 禁用梯度计算
             outputs = model(image)  # 前向传播
             # 处理二分类输出，使用sigmoid并与0.5进行阈值比较
-            predicted_mask = (torch.sigmoid(outputs) > 0.5).long().squeeze(0).squeeze(0).cpu().numpy()  # 获取二值化分割结果
+            predicted_mask = (torch.sigmoid(outputs) > 0.9).long().squeeze(0).squeeze(0).cpu().numpy()  # 获取二值化分割结果
 
         return predicted_mask
     except Exception as e:
@@ -59,6 +59,8 @@ def main():
     解析命令行参数，加载模型，并进行推理。
     """
     # 设置日志
+    logging.getLogger("PIL").setLevel(logging.WARNING)
+    logging.getLogger('matplotlib').setLevel(logging.WARNING)
     model = mymodel(n_channels=3, n_classes=1)  # 假设模型输出是一个单通道的分割图
     model_name = model.__class__.__name__
     log_filename = os.path.join(model_name, 'inference_log.txt')
@@ -76,7 +78,7 @@ def main():
     logger.info(f"使用设备: {device}")
 
     # 确保模型路径存在
-    checkpoint_path = os.path.join(args.save_dir, f"{model_name}_epoch_80.pth")
+    checkpoint_path = os.path.join(args.save_dir, f"{model_name}_best_model.pth")
     if not os.path.exists(checkpoint_path):
         logger.error(f"模型权重文件 {checkpoint_path} 不存在！请检查路径是否正确。")
         return
