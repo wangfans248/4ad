@@ -35,7 +35,7 @@ def inference(model, image_path, device):
         with torch.no_grad():  # 禁用梯度计算
             outputs = model(image)  # 前向传播
             # 处理二分类输出，使用sigmoid并与0.5进行阈值比较
-            predicted_mask = (torch.sigmoid(outputs) > 0.9).long().squeeze(0).squeeze(0).cpu().numpy()  # 获取二值化分割结果
+            predicted_mask = (torch.sigmoid(outputs) == 1).long().squeeze(0).squeeze(0).cpu().numpy()  # 获取二值化分割结果
 
         return predicted_mask
     except Exception as e:
