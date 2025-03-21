@@ -163,7 +163,6 @@ def main():
     # 损失函数 & 优化器
     criterion = CombinedLoss(alpha=args['alpha'])
     optimizer = optim.Adam(model.parameters(), lr=args['lr'])
-    
     checkpoint_path = os.path.join("results/dict", f"{model_name}_epoch_{args.get('resume_epoch', 0)}.pth")
     
     if os.path.exists(checkpoint_path):

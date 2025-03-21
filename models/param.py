@@ -1,11 +1,12 @@
 import argparse
 
 class Config:
-    def __init__(self, batch_size=16, lr=0.001, epochs=200, alpha = 0.6):
+    def __init__(self, batch_size=16, lr=0.001, epochs=200, alpha = 0.6, resume_epoch=0):
         self.batch_size = batch_size
         self.lr = lr
         self.epochs = epochs
         self.alpha = alpha
+        self.resume_epoch = resume_epoch
     
         self.parse_args()
 
@@ -14,11 +15,12 @@ class Config:
         parser.add_argument("--batch_size", type=int, default=self.batch_size, help="Batch size for training")
         parser.add_argument("--lr", type=float, default=self.lr, help="Learning rate")
         parser.add_argument("--epochs", type=int, default=self.epochs, help="Number of training epochs")
-
+        parser.add_argument("--resume_epoch", type=int, default=self.resume_epoch, help="Epoch to resume training from")
         args = parser.parse_args()
         self.batch_size = args.batch_size
         self.lr = args.lr
         self.epochs = args.epochs
+        self.resume_epoch = args.resume_epoch
 
 
     def update(self, **kwargs):

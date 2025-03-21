@@ -97,7 +97,7 @@ def main():
         logger.info(f"分割完成，结果已保存。")
         visualize_segmentation(predicted_mask, args.output_path)
 
-    visualize_feature_maps_with_hooks(args.image_path)
+    visualize_feature_maps_with_hooks(model, args.image_path)
 
 if __name__ == "__main__":
     main()
